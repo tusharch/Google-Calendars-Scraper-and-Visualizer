@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <title> Google Calendars Tool</title>
+      <style>
+          .select-css {
+      display: block;
+      font-size: 16px;
+      font-family: sans-serif;
+      font-weight: 700;
+      color: #444;
+      line-height: 1.3;
+      padding: .6em 1.4em .5em .8em;
+      width: 20%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      border: 1px solid #aaa;
+      box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+      border-radius: .5em;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      appearance: none;
+      background-color: #fff;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
+        linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
+      background-repeat: no-repeat, repeat;
+      background-position: right .7em top 50%, 0 0;
+      background-size: .65em auto, 100%;
+    }
+    .select-css::-ms-expand {
+      display: none;
+    }
+    .select-css:hover {
+      border-color: #888;
+    }
+    .select-css:focus {
+      border-color: #aaa;
+      box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+      box-shadow: 0 0 0 3px -moz-mac-focusring;
+      color: #222;
+      outline: none;
+    }
+    .select-css option {
+      font-weight:normal;
+    }
+    .button1 {
+  background-color:grey;
+  border: black;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  position: relative;
+}
+
+.button2{
+  background-color:black;
+  border: black;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  position: relative;
+  float: left;
+}
+
+
+        </style>
+    <meta charset="utf-8" />
+    <title>Calendars Visualizations</title>
+    <!-- import plugin script -->
+    <script src='static/Chart.min.js'></script>
+  </head>
+  <body>
+      <h1 style ="color:gray"> Google Calendars Data Visualization </h1>
+    {% if renderGraph == "True" %}
+    {% if xType == "Calendars" %}
+      <h2 align = "center">Distribution of Time Spent by each Calendar</h2>
+      {% elif xType == "Events" %}
+      <h2 align = "center">Distribution of Time Spent by each Event</h2>
+      {% elif xType == "Participants" %}
+      <h2 align = "center">Distribution of Time Spent by each Participant</h2>
+      {% endif %}
+      {% endif %}
+      <form method="post" enctype="multipart/form-data">
+        X Axis
+        {% if xType == " " or xType == "Calendars" %}
+        <select name = xAxis class="select-css">
+            <option value="Calendars">Calendars</option>
+            <option value="Events">Events</option>
+            <option value="Participants">Participants</option>
+            <input type="submit" class = "button2" value="Select">
+          </select>
+          {% elif xType == "Events" %}
+          <select name = xAxis class="select-css">
+          <option value="Events">Events</option>
+          <option value="Calendars">Calendars</option>
+            <option value="Participants">Participants</option>
+            <input type="submit" class = "button2" value="Select">
+          </select>
+            {% elif xType == "Participants" %}
+            <select name = xAxis class="select-css">
+            <option vsalue="Participants">Participants</option>
+            <option value="Events">Events</option>
+          <option value="Calendars">Calendars</option>
+          <input type="submit" class = "button2" value="Select">
+          </select>
+          {% endif %}
+
+        </form>
+        
+        <br>
+        <br>
+        <br>
+
+        {% if renderGraph == "True" %}
+        <form method="post" enctype="multipart/form-data">
+          Property
+          {% if xType == "Calendars" %}
+          <select name = type class="select-css">
+              {% if prev_type == "LENGTH" %}
+            <option value="LENGTH">Length</option>
+            <option value="ID">Calendar ID</option>
+            {% else %}
+            <option value="ID">Calendar ID</option>
+            <option value="LENGTH">Length</option>
+            {% endif %}
+          </select>
+          {% elif xType == "Events" %}
+          <select name = type class="select-css">
+              {% if prev_type == "DATE" %}
+              <option value="DATE">Date</option>
+              <option value="LENGTH">Length</option>
+              <option value="STARTTIME">Start Time</option>
+              <option value="ENDTIME">End Time</option>
+              <option value="P" >Number of Participants</option>
+              {% elif prev_type == "STARTTIME" %}
+              <option value="STARTTIME">Start Time</option>
+              <option value="DATE">Date</option>
+              <option value="LENGTH">Length</option>
+              <option value="ENDTIME">End Time</option>
+              <option value="P" >Number of Participants</option>
+              {% elif prev_type == "ENDTIME" %}
+              <option value="ENDTIME">End Time</option>
+              <option value="DATE">Date</option>
+              <option value="LENGTH">Length</option>
+              <option value="STARTTIME">Start Time</option>
+              <option value="P" >Number of Participants</option>
+              {% elif prev_type == "P" %}
+              <option value="P" >Number of Participants</option>
+              <option value="DATE">Date</option>
+              <option value="LENGTH">Length</option>
+              <option value="STARTTIME">Start Time</option>
+              <option value="ENDTIME">End Time</option>
+              {% else %}
+              <option value="LENGTH">Length</option>
+              <option value="DATE">Date</option>
+              <option value="STARTTIME">Start Time</option>
+              <option value="ENDTIME">End Time</option>
+              <option value="P" >Number of Participants</option>
+              {% endif %}
+            </select>
+            {% elif xType == "Participants" %}
+
+            <select name = type class="select-css">
+                {% if prev_type == "NAME" %}
+                <option value="NAME">Participant Name/Email</option>
+                <option value="LENGTH">Total Time Spent</option>
+                {% else %}
+                <option value="LENGTH">Total Time Spent</option>
+                <option value="NAME">Participant Name/Email</option>
+                {% endif %}
+              </select>
+              {% endif %}
+
+          Ascending/Descending
+          <select name = type2 class="select-css">
+            {% if reverse == "True" %}
+            <option value="DESC">Descending Order</option>
+            <option value="ASC">Ascending Order</option>
+            {% else %}
+            <option value="ASC">Ascending Order</option>
+            <option value="DESC">Descending Order</option>
+            {% endif %}
+          </select>
+          <input type="hidden" name="XAxisVar" value= {{xType}} >
+          <input type="submit" class = "button1" value="Sort">
+        </form>
+    <!-- bar chart canvas element -->
+
+    
+    <canvas id="myChart"></canvas>
+
+
+
+    <script>
+      
+      // Global parameters:
+      // do not resize the chart canvas when its container does (keep at 600x400px)
+      Chart.defaults.global.responsive = true;
+      // define the chart data
+      var chartData = {
+        labels : [{% for item in labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [{
+            label: '{{ legend }}',
+            fill: true,
+            lineTension: 0.1,
+            backgroundColor: 'purple',
+            borderColor: "black",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in values %}
+                      {{item}},
+                    {% endfor %}],
+            spanGaps: true
+        }]
+      }
+
+      // get chart canvas
+      var ctx = document.getElementById("myChart").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+          options: {
+    scales: {
+      xAxes: [{
+        stacked: false,
+        beginAtZero: true,
+        ticks: {
+            autoSkip: false
+        }
+      }]
+    }
+      }
+      });
+    </script>
+{% endif %}
+  </body>
+</html>
